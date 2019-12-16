@@ -26,7 +26,7 @@ All_Players <-- API: STARTED
 Player_A -> API: GET BOARD
 activate API
 
-Player_A <-- API: BOARD\n{\n  0: "mountain",\n  1: "pasture",\n  ...\n  18: "forest"\n}
+Player_A <-- API: BOARD\n{\n  0: {"field": "mountain", "point": 13},\n  1: {"field": "pasture", "point": 2},\n  ...\n  18: {"field": "forest", "point": 5}\n}
 deactivate API
 
 
