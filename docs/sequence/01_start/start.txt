@@ -1,0 +1,40 @@
+@startuml
+
+title __Catan: start a game__
+
+/' participants '/
+
+participant All_Players
+participant Player_A
+participant API
+
+
+/' start the game '/
+
+Player_A -> API: START
+activate API
+
+Player_A <-- API: OK
+deactivate API
+
+All_Players <-- API: STARTED
+
+
+/' generate a board '/
+
+Player_A -> API: GET BOARD
+activate API
+
+Player_A <-- API: BOARD\n{\n  0: "mountain",\n  1: "pasture",\n  ...\n  18: "forest"\n}
+deactivate API
+
+
+/' decide order of players '/
+
+Player_A -> API: GET ORDER
+activate API
+
+Player_A <- API: ORDER\n[\n  "playerA",\n  "playerC",\n  "playerD",\n  "playerB"\n]
+deactivate API
+
+@enduml
