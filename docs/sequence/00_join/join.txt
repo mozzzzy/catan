@@ -1,0 +1,21 @@
+@startuml
+
+title __Catan: join to a game__
+
+/' participants '/
+
+participant All_Players
+participant Player_A
+participant API
+
+/' join to a game '/
+
+Player_A -> API: JOIN
+activate API
+
+Player_A <-- API: CLIENT-ID: <client id of A>
+deactivate API
+
+All_Players <-- API: ANNOUNCE: <client id of A> joined to a game
+
+@enduml
