@@ -17,6 +17,7 @@ activate API
 Player_A <-- API: OK
 deactivate API
 
+All_Players <-- API: ANNOUNCE: <client id of A> started a game
 All_Players <-- API: STARTED
 
 
@@ -34,7 +35,7 @@ deactivate API
 Player_A -> API: GET ORDER
 activate API
 
-Player_A <- API: ORDER\n[\n  "playerA",\n  "playerC",\n  "playerD",\n  "playerB"\n]
+Player_A <-- API: ORDER\n[\n  "playerA",\n  "playerC",\n  "playerD",\n  "playerB"\n]
 deactivate API
 
 @enduml
