@@ -1,0 +1,9 @@
+<body>
+  <svg id="map" width="20cm" height="20cm" viewBox="0 0 1200 1200">
+    <rect x="0" y="0" width="1200" height="1200" fill="lightblue" stroke="lightblue" stroke-width="20" />
+    <polygon v-bind:fill="c.color" stroke="orange" stroke-width="10" v-bind:points="c.points" v-for="c in cells" />
+  </svg>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="./client.js"></script>
