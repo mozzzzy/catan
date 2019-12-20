@@ -141,6 +141,14 @@ activate API
 Each_Players <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
 deactivate API
 
+/' declaration of victory '/
+
+== Declare victory ==
+Player_A -> API
+note left
+  TODO
+end note
+
 /' turn end '/
 
 All_Players <-- API: TURN END: <client id of A>
