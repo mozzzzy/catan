@@ -1,0 +1,39 @@
+@startuml
+
+title __Catan: set second settlement__
+
+/' participants '/
+
+participant All_Players
+participant Player_A
+participant API
+
+
+/' create settlement '/
+
+All_Players <-- API: TURN START: <client id of A>
+
+Player_A -> API: CREATE SETTLEMENT x y
+activate API
+
+Player_A <-- API: OK
+deactivate API
+
+/' create road '/
+Player_A -> API: CREATE ROAD x y z
+activate API
+
+Player_A <-- API: OK
+deactivate API
+
+API -> API: add resource cards
+Player_A <-- API: CARD UPDATED
+
+Player_A -> API: GET RESOURCE
+activate API
+Player_A <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
+deactivate API
+
+All_Players <-- API: TURN END: <client id of A>
+
+@enduml
