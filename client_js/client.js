@@ -1,12 +1,62 @@
+const R = 100;
+const OFFSET_X = 200;
+const OFFSET_Y = 200;
+const Resource = {
+  Iron: "gray",
+  Soil: "brown",
+  Tree: "green"
+};
+
 var map = new Vue({
   el: '#map',
   data: {
     cells: [
-      {color: "green", points: "850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5"},
-      {color: "chocolate", points: "350,75 458,137.5 458,262.5 350,325 242,262.6 242,137.5"},
-      {color: "gray", points: "350,575 458,637.5 458,762.5 350,825 242,762.6 242,637.5"},
-      {color: "yellow", points: "850,575 958,637.5 958,762.5 850,825 742,762.6 742,637.5"},
+      {resource: Resource.Tree, pos: {x: 0, y: 0}},
+      {resource: Resource.Tree, pos: {x: 2, y: 0}},
+      {resource: Resource.Iron, pos: {x: 4, y: 0}},
+      {resource: Resource.Soil, pos: {x: 1, y: 1}},
+      {resource: Resource.Iron, pos: {x: 3, y: 1}},
+      {resource: Resource.Tree, pos: {x: 5, y: 1}},
+      {resource: Resource.Iron, pos: {x: 0, y: 2}},
+      {resource: Resource.Iron, pos: {x: 2, y: 2}},
+      {resource: Resource.Tree, pos: {x: 4, y: 2}},
+      {resource: Resource.Soil, pos: {x: 1, y: 3}},
+      {resource: Resource.Soil, pos: {x: 3, y: 3}},
+      {resource: Resource.Iron, pos: {x: 5, y: 3}},
+      {resource: Resource.Tree, pos: {x: 0, y: 4}},
+      {resource: Resource.Tree, pos: {x: 2, y: 4}},
+      {resource: Resource.Iron, pos: {x: 4, y: 4}},
+      {resource: Resource.Soil, pos: {x: 1, y: 5}},
+      {resource: Resource.Iron, pos: {x: 3, y: 5}},
+      {resource: Resource.Tree, pos: {x: 5, y: 5}},
+      {resource: Resource.Iron, pos: {x: 0, y: 6}},
+      {resource: Resource.Iron, pos: {x: 2, y: 6}},
+      {resource: Resource.Tree, pos: {x: 4, y: 6}},
+      {resource: Resource.Soil, pos: {x: 1, y: 7}},
+      {resource: Resource.Soil, pos: {x: 3, y: 7}},
+      {resource: Resource.Iron, pos: {x: 5, y: 7}},
     ]
+  },
+  methods: {
+    svg_pos: function(pos) {
+      s = R * Math.sin(Math.PI / 3.0);
+      c = R * Math.cos(Math.PI / 3.0);
+
+      x = pos.x * (R + c) + OFFSET_X;
+      y = pos.y * s + OFFSET_Y;
+      return {x: x, y: y}
+    },
+    svg_points: function(pos) {
+      p = this.svg_pos(pos);
+      x = p.x, y = p.y;
+      res = (x + R) + "," + y + " ";
+      res += (x + c) + "," + (y + s) + " ";
+      res += (x - c) + "," + (y + s) + " ";
+      res += (x - R) + "," + y + " ";
+      res += (x - c) + "," + (y - s) + " ";
+      res += (x + c) + "," + (y - s) + " ";
+      return res
+    },
   }
 })
 
