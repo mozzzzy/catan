@@ -16,6 +16,6 @@ activate API
 Player_A <-- API: CLIENT-ID: <client id of A>
 deactivate API
 
-All_Players <-- API: ANNOUNCE: <client id of A> joined to a game
+All_Players <-- API: CHAT: <client id of A> joined to a game
 
 @enduml
