@@ -1,0 +1,148 @@
+@startuml
+
+title __Catan: one turn__
+
+/' participants '/
+
+participant All_Players
+participant Each_Players
+participant Player_A
+participant API
+
+/' turn start '/
+
+All_Players <-- API: TURN START: <client id of A>
+
+/' role dice '/
+
+== Role Dice ==
+Player_A -> API: ROLE DICE
+activate API
+
+All_Players <-- API: DICE <client id of A> 4 6
+deactivate API
+
+alt if sum of dices is 7
+All_Players <-- API
+note left
+  TODO
+end note
+end
+
+/' update resource cards '/
+
+API -> API: add resource cards
+
+All_Players <-- API: CARD UPDATED
+note left
+  TODO
+  Api should notify all players that
+  each players card was added.
+  And then, all players should get each players
+  number of cards.
+end note
+
+All_Players -> API: GET RESOURCE
+activate API
+
+Each_Players <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
+deactivate API
+
+/' create settlement '/
+
+== Create Settlement ==
+Player_A -> API: CREATE SETTLEMENT x y
+activate API
+
+Player_A <-- API: OK
+deactivate API
+
+API -> API: remove resource cards
+Player_A <-- API: CARD UPDATED
+Player_A -> API: GET RESOURCE
+activate API
+
+Player_A <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
+deactivate API
+
+All_Players <-- API: CREATE SETTLEMENT <client id of A> x y
+
+/' create road '/
+
+== Create Road ==
+Player_A -> API: CREATE ROAD x y z
+activate API
+
+Player_A <-- API: OK
+deactivate API
+
+API -> API: remove resource cards
+Player_A <-- API: CARD UPDATED
+Player_A -> API: GET RESOURCE
+activate API
+
+Player_A <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
+deactivate API
+
+All_Players <-- API: CREATE ROAD <client id of A> x y z
+
+/' get development card '/
+
+== Get Development Card ==
+Player_A -> API: CREATE DEVCARD
+activate API
+Player_A <-- API: OK
+deactivate API
+
+API -> API: remove resource cards
+API -> API: add a development card
+Player_A <-- API: CARD UPDATED
+
+Player_A -> API: GET RESOURCE
+activate API
+
+Player_A <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
+deactivate API
+
+Player_A -> API: GET DEVELOPMENT
+activate API
+
+Player_A <-- API: {\n  soldier: 1,\n  ...\n}
+deactivate API
+
+All_Players <-- API: CREATE DEVCARD <client id of A>
+
+/' use development card '/
+
+== Use Development Card ==
+Player_A -> API
+note left
+  TODO
+end note
+
+/' trade resources '/
+
+== Trade Resource Card ==
+Player_A -> API: TRADE\n{\n  <client id>,\n  <client id>\n},\n{\n  ore: 1\n},\n{\n  brick: 2\n}\n
+activate API
+
+Each_Players <-- API: TRADE\n<client id of A>\n{\n  ore: 1\n},\n{\n  brick: 2\n}\n
+deactivate API
+
+Each_Players -> API: OK
+
+API -> API: trade resource cards
+
+Each_Players <-- API: CARD UPDATED
+
+Each_Players -> API: GET RESOURCE
+activate API
+
+Each_Players <-- API: {\n  brick: 1,\n  lumber: 1,\n  wool: 0,\n  grain: 0,\n  ore: 0\n}
+deactivate API
+
+/' turn end '/
+
+All_Players <-- API: TURN END: <client id of A>
+
+@enduml

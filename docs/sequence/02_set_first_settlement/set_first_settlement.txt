@@ -19,12 +19,16 @@ activate API
 Player_A <-- API: OK
 deactivate API
 
+All_Players <-- API: CREATE SETTLEMENT <client id of A> x y
+
 /' create road '/
 Player_A -> API: CREATE ROAD x y z
 activate API
 
 Player_A <-- API: OK
 deactivate API
+
+All_Players <-- API: CREATE ROAD <client id of A> x y z
 
 All_Players <-- API: TURN END: <client id of A>
 
