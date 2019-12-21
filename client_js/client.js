@@ -4,7 +4,8 @@ const OFFSET_Y = 200;
 const Resource = {
   Iron: "gray",
   Soil: "brown",
-  Tree: "green"
+  Tree: "green",
+  All: "gold",
 };
 const SIN = R * Math.sin(Math.PI / 3.0);
 const COS = R * Math.cos(Math.PI / 3.0);
@@ -39,9 +40,9 @@ let map = new Vue({
       {x: 5, y: 7, resource: Resource.Iron},
     ],
     vertices:  [
-      {x: 1, y: 0, is_port: true},
-      {x: 2, y: 0, is_port: true},
-      {x: 2, y: 8, is_port: true},
+      {x: 1, y: 0, trade_rate: 2, port: Resource.Tree},
+      {x: 2, y: 0, trade_rate: 3, port: Resource.All},
+      {x: 2, y: 8, trade_rate: 2, port: Resource.Soil},
     ],
   },
   computed: { // like read only properties
@@ -71,39 +72,26 @@ let map = new Vue({
       for (let i = 0; i < this.all_cells.length; i++) {
         let vertices = this.all_cells[i].vertices;
         for (let j = 0; j < vertices.length; j++) {
-          let pos = vertices[j].x + "," + vertices[j].y;
-          if (!s.has(pos)) {
-            res.push(vertices[j]);
-          }
-          s.add(pos);
-        }
-      }
-      return res;
-    },
-    all_ports: function() {
-      let res = [];
-      for (let i = 0; i < this.vertices.length; i++) {
-        if (!this.vertices[i].is_port) {
-          continue;
-        }
-        let port = this.vertices[i];
-        let neighbor_cells = [];
-        for (let j = 0; j < this.all_cells.length; j++) {
-          let cell = this.all_cells[j];
-          let is_neighbor = false;
-          for (let k = 0; k < cell.vertices.length; k++) {
-            if (cell.vertices[k].x == port.x && cell.vertices[k].y == port.y) {
-              port.svg_x = cell.vertices[k].svg_x;
-              port.svg_y = cell.vertices[k].svg_y;
-              is_neighbor = true;
+          let v = vertices[j];
+          vertices[j].message = "(" + v.x + "," + v.y + ")";
+
+          // add message for port
+          for (let k = 0; k < this.vertices.length; k++) {
+            if (v.x == this.vertices[k].x && v.y == this.vertices[k].y) {
+              switch (this.vertices[k].port) {
+                case Resource.Soil: v.message += " " + this.vertices[k].trade_rate + ":1 Soil"; break;
+                case Resource.Tree: v.message += " " + this.vertices[k].trade_rate + ":1 Tree"; break;
+                case Resource.All: v.message  += " " + this.vertices[k].trade_rate + ":1 All"; break;
+              }
             }
           }
-          if (is_neighbor) {
-            neighbor_cells.push(cell);
-          }
+
+          // prevent duplication
+          let pos = v.x + "," + v.y;
+          if (!s.has(pos))
+            res.push(v);
+          s.add(pos);
         }
-        console.log("cells " + neighbor_cells.map(cell => "(" + cell.x + "," + cell.y + ")" ).join(",")
-          + " is neighbor of port (" + port.x + "," + port.y + ")");
       }
       return res;
     },

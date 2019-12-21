@@ -5,10 +5,9 @@
     <text font-weight="bold" v-bind:x="c.svg_x" v-bind:y="c.svg_y" font-size="32" text-anchor="middle" v-for="c in all_cells">
     {{ "(" + c.x + "," + c.y + ")" }}
     </text>
-    <text font-weight="bold" v-bind:x="v.svg_x" v-bind:y="v.svg_y" font-size="20" text-anchor="middle" v-for="v in all_vertices">
-    {{ "(" + v.x + "," + v.y + ")" }}
+    <text font-weight="bold" v-bind:x="v.svg_x" v-bind:y="v.svg_y" font-size="18" text-anchor="middle" v-for="v in all_vertices">
+    {{ v.message }}
     </text>
-    {{ all_ports }}
   </svg>
 </body>
 
