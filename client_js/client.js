@@ -46,7 +46,16 @@ let map = new Vue({
         let c = this.cells[i];
         c.svg_x = c.x * (R + COS) + OFFSET_X;
         c.svg_y = c.y * SIN + OFFSET_Y;
-        c.points = this.vertices(c).map(v => v.svg_x + "," + v.svg_y).join(" ");
+        c.vertices = [];
+        {
+          c.vertices.push({x: c.x + 3, y: c.y + 1, svg_x: (c.svg_x + R),   svg_y: (c.svg_y + 0  )});
+          c.vertices.push({x: c.x + 2, y: c.y + 2, svg_x: (c.svg_x + COS), svg_y: (c.svg_y + SIN)});
+          c.vertices.push({x: c.x + 1, y: c.y + 2, svg_x: (c.svg_x - COS), svg_y: (c.svg_y + SIN)});
+          c.vertices.push({x: c.x + 0, y: c.y + 1, svg_x: (c.svg_x - R),   svg_y: (c.svg_y + 0  )});
+          c.vertices.push({x: c.x + 1, y: c.y + 0, svg_x: (c.svg_x - COS), svg_y: (c.svg_y - SIN)});
+          c.vertices.push({x: c.x + 2, y: c.y + 0, svg_x: (c.svg_x + COS), svg_y: (c.svg_y - SIN)});
+        }
+        c.points = c.vertices.map(v => v.svg_x + "," + v.svg_y).join(" ");
         res.push(c);
       }
       return res;
@@ -55,11 +64,9 @@ let map = new Vue({
       let res = [];
       let s = new Set();
       for (let i = 0; i < this.all_cells.length; i++) {
-        let vertices = this.vertices(this.all_cells[i]);
+        let vertices = this.all_cells[i].vertices;
         for (let j = 0; j < vertices.length; j++) {
-          let x = vertices[j].x;
-          let y = vertices[j].y;
-          let pos = x + "," + y;
+          let pos = vertices[j].x + "," + vertices[j].y;
           if (!s.has(pos)) {
             res.push(vertices[j]);
           }
@@ -70,20 +77,6 @@ let map = new Vue({
     }
   },
   methods: {
-    vertices: function(cell) {
-      let res = [];
-      let x = cell.x;
-      let y = cell.y;
-      let svg_x = cell.svg_x;
-      let svg_y = cell.svg_y;
-      res.push({x: x + 3, y: y + 1, svg_x: (svg_x + R),   svg_y: (svg_y + 0  )});
-      res.push({x: x + 2, y: y + 2, svg_x: (svg_x + COS), svg_y: (svg_y + SIN)});
-      res.push({x: x + 1, y: y + 2, svg_x: (svg_x - COS), svg_y: (svg_y + SIN)});
-      res.push({x: x + 0, y: y + 1, svg_x: (svg_x - R),   svg_y: (svg_y + 0  )});
-      res.push({x: x + 1, y: y + 0, svg_x: (svg_x - COS), svg_y: (svg_y - SIN)});
-      res.push({x: x + 2, y: y + 0, svg_x: (svg_x + COS), svg_y: (svg_y - SIN)});
-      return res;
-    },
   }
 })
 
