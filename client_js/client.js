@@ -3,11 +3,13 @@ const OFFSET_X = 160;
 const OFFSET_Y = 160;
 const WIDTH = 800;
 const HEIGHT = 800;
-const Resource = {
-  Iron: "gray",
-  Soil: "brown",
-  Tree: "green",
-  All: "gold",
+const ResourceMap = {
+  "NONE":     "lightgray",
+  "FOREST":   "green",
+  "PASTURE":  "lightgreen",
+  "FIELD":    "yellow",
+  "HILL":     "brown",
+  "MOUNTAIN": "gray",
 };
 const SIN = R * Math.sin(Math.PI / 3.0);
 const COS = R * Math.cos(Math.PI / 3.0);
@@ -15,38 +17,16 @@ const COS = R * Math.cos(Math.PI / 3.0);
 let map = new Vue({
   el: '#map',
   data: {
+    conn: null,
     width: WIDTH,
     height: HEIGHT,
     cells: [
-      {x: 0, y: 0, resource: Resource.Tree},
-      {x: 2, y: 0, resource: Resource.Tree},
-      {x: 4, y: 0, resource: Resource.Iron},
-      {x: 1, y: 1, resource: Resource.Soil},
-      {x: 3, y: 1, resource: Resource.Iron},
-      {x: 5, y: 1, resource: Resource.Tree},
-      {x: 0, y: 2, resource: Resource.Iron},
-      {x: 2, y: 2, resource: Resource.Iron},
-      {x: 4, y: 2, resource: Resource.Tree},
-      {x: 1, y: 3, resource: Resource.Soil},
-      {x: 3, y: 3, resource: Resource.Soil},
-      {x: 5, y: 3, resource: Resource.Iron},
-      {x: 0, y: 4, resource: Resource.Tree},
-      {x: 2, y: 4, resource: Resource.Tree},
-      {x: 4, y: 4, resource: Resource.Iron},
-      {x: 1, y: 5, resource: Resource.Soil},
-      {x: 3, y: 5, resource: Resource.Iron},
-      {x: 5, y: 5, resource: Resource.Tree},
-      {x: 0, y: 6, resource: Resource.Iron},
-      {x: 2, y: 6, resource: Resource.Iron},
-      {x: 4, y: 6, resource: Resource.Tree},
-      {x: 1, y: 7, resource: Resource.Soil},
-      {x: 3, y: 7, resource: Resource.Soil},
-      {x: 5, y: 7, resource: Resource.Iron},
+      {x: 2, y: 4, resource: "NONE"},
     ],
     vertices:  [
-      {x: 1, y: 0, trade_rate: 2, port: Resource.Tree},
-      {x: 2, y: 0, trade_rate: 3, port: Resource.All},
-      {x: 2, y: 8, trade_rate: 2, port: Resource.Soil},
+      {x: 2, y: 2, trade_rate: 2, port: "FOREST"},
+      {x: 6, y: 0, trade_rate: 2, port: "FOREST"},
+      {x: 8, y: 9, trade_rate: 3, port: "ALL"},
     ],
   },
   computed: { // like read only properties
@@ -89,6 +69,7 @@ let map = new Vue({
           c.vertices.push({x: 2*c.x + 2, y: c.y + 0, svg_x: (c.svg_x + COS), svg_y: (c.svg_y - SIN)});
         }
         c.points = c.vertices.map(v => v.svg_x + "," + v.svg_y).join(" ");
+        c.color = ResourceMap[c.resource];
         res.push(c);
       }
       return res;
@@ -104,11 +85,7 @@ let map = new Vue({
           // add message for port
           for (let k = 0; k < this.vertices.length; k++) {
             if (v.x == this.vertices[k].x && v.y == this.vertices[k].y) {
-              switch (this.vertices[k].port) {
-                case Resource.Soil: v.message = " " + this.vertices[k].trade_rate + ":1 Soil"; break;
-                case Resource.Tree: v.message = " " + this.vertices[k].trade_rate + ":1 Tree"; break;
-                case Resource.All: v.message  = " " + this.vertices[k].trade_rate + ":1 All"; break;
-              }
+              v.message = " " + this.vertices[k].trade_rate + ":1 " + this.vertices[k].port;
             }
           }
 
@@ -122,16 +99,34 @@ let map = new Vue({
       return res;
     },
   },
+  created: function() {
+    this.conn = new WebSocket('ws://localhost:8000/echo');
+    this.conn.onopen = this.onopen;
+    this.conn.onmessage = this.onmessage;
+    this.conn.onerror = this.onerror;
+    this.conn.onclose = this.onclose;
+  },
   methods: {
+    reload: function() {
+      msg = JSON.stringify({'client_id': 'hoge', 'message': 'join'});
+      console.log("send message:", msg);
+      this.conn.send(msg);
+    },
+    onopen: function(e) {},
+    onerror: function(e) {},
+    onclose: function(e) {},
+    onmessage: function(e) {
+      console.log("receive message:", e.data);
+      d = JSON.parse(e.data);
+      this.cells = [];
+      for (let i = 0; i < d.cells.length; i++) {
+        this.cells.push({
+          x: d.cells[i].x,
+          y: d.cells[i].y,
+          resource: d.cells[i].resource,
+        });
+      }
+    },
   }
 })
 
-let conn = new WebSocket('ws://localhost:8000/echo');
-conn.onopen = function(e) {
-  for (let i = 0; i < 10; i++) {
-    conn.send('hello ' + i);
-  }
-};
-conn.onerror = function(err) { console.log("onerror: " + err); };
-conn.onmessage = function(e) { console.log("onmessage: " + e.data); };
-conn.onclose = function(e) { console.log("onclose: " + e.data); };

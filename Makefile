@@ -4,4 +4,4 @@ docs:
 	plantuml docs/sequence/*/*.txt
 
 server:
-	go build -o catan_server server/main.go
+	go build -o catan_server ./...
