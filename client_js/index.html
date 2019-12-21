@@ -1,10 +1,16 @@
 <body>
   <svg id="map" width="20cm" height="20cm" viewBox="0 0 1200 1200">
-    <rect x="0" y="0" width="1200" height="1200" fill="lightblue" stroke="lightblue" stroke-width="20" />
-    <polygon v-bind:fill="c.resource" stroke="orange" stroke-width="10" v-bind:points="svg_points(c.pos)" v-for="c in cells" />
-    <text v-bind:x="svg_pos(c.pos).x" v-bind:y="svg_pos(c.pos).y" font-size="32" text-anchor="middle" v-for="c in cells" >
+    <rect x="0" y="0" width="1200" height="1200" fill="lightblue" stroke="darkblue" stroke-width="16" />
+    <polygon v-bind:fill="c.resource" stroke="orange" stroke-width="10" v-bind:points="svg_vertices_str(c.pos)" v-for="c in cells" />
+    <text v-bind:x="svg_pos(c.pos).x" v-bind:y="svg_pos(c.pos).y" font-size="32" text-anchor="middle" v-for="c in cells">
     {{ "(" + c.pos.x + "," + c.pos.y + ")" }}
     </text>
+
+    <g v-bind:c="c" v-for="c in cells">
+      <text v-bind:x="v.svg_x" v-bind:y="v.svg_y" font-size="20" text-anchor="middle" v-for="v in svg_vertices(c.pos)">
+        {{ "(" + v.x + "," + v.y + ")" }}
+      </text>
+    </g>
   </svg>
 </body>
 

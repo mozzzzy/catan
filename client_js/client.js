@@ -38,24 +38,28 @@ var map = new Vue({
     ]
   },
   methods: {
-    svg_pos: function(pos) {
+    svg_pos: function(cell_pos) {
       s = R * Math.sin(Math.PI / 3.0);
       c = R * Math.cos(Math.PI / 3.0);
 
-      x = pos.x * (R + c) + OFFSET_X;
-      y = pos.y * s + OFFSET_Y;
+      x = cell_pos.x * (R + c) + OFFSET_X;
+      y = cell_pos.y * s + OFFSET_Y;
       return {x: x, y: y}
     },
-    svg_points: function(pos) {
-      p = this.svg_pos(pos);
+    svg_vertices: function(cell_pos) {
+      res = [];
+      p = this.svg_pos(cell_pos);
       x = p.x, y = p.y;
-      res = (x + R) + "," + y + " ";
-      res += (x + c) + "," + (y + s) + " ";
-      res += (x - c) + "," + (y + s) + " ";
-      res += (x - R) + "," + y + " ";
-      res += (x - c) + "," + (y - s) + " ";
-      res += (x + c) + "," + (y - s) + " ";
-      return res
+      res.push({x: cell_pos.x + 3, y: cell_pos.y + 1, svg_x: (x + R), svg_y: (y + 0)});
+      res.push({x: cell_pos.x + 2, y: cell_pos.y + 2, svg_x: (x + c), svg_y: (y + s)});
+      res.push({x: cell_pos.x + 1, y: cell_pos.y + 2, svg_x: (x - c), svg_y: (y + s)});
+      res.push({x: cell_pos.x + 0, y: cell_pos.y + 1, svg_x: (x - R), svg_y: (y + 0)});
+      res.push({x: cell_pos.x + 1, y: cell_pos.y + 0, svg_x: (x - c), svg_y: (y - s)});
+      res.push({x: cell_pos.x + 2, y: cell_pos.y + 0, svg_x: (x + c), svg_y: (y - s)});
+      return res;
+    },
+    svg_vertices_str: function(cell_pos) {
+      return this.svg_vertices(cell_pos).map(v => v.svg_x + "," + v.svg_y).join(" ");
     },
   }
 })
