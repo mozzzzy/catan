@@ -6,67 +6,90 @@ const Resource = {
   Soil: "brown",
   Tree: "green"
 };
+const SIN = R * Math.sin(Math.PI / 3.0);
+const COS = R * Math.cos(Math.PI / 3.0);
 
-var map = new Vue({
+let map = new Vue({
   el: '#map',
   data: {
     cells: [
-      {resource: Resource.Tree, pos: {x: 0, y: 0}},
-      {resource: Resource.Tree, pos: {x: 2, y: 0}},
-      {resource: Resource.Iron, pos: {x: 4, y: 0}},
-      {resource: Resource.Soil, pos: {x: 1, y: 1}},
-      {resource: Resource.Iron, pos: {x: 3, y: 1}},
-      {resource: Resource.Tree, pos: {x: 5, y: 1}},
-      {resource: Resource.Iron, pos: {x: 0, y: 2}},
-      {resource: Resource.Iron, pos: {x: 2, y: 2}},
-      {resource: Resource.Tree, pos: {x: 4, y: 2}},
-      {resource: Resource.Soil, pos: {x: 1, y: 3}},
-      {resource: Resource.Soil, pos: {x: 3, y: 3}},
-      {resource: Resource.Iron, pos: {x: 5, y: 3}},
-      {resource: Resource.Tree, pos: {x: 0, y: 4}},
-      {resource: Resource.Tree, pos: {x: 2, y: 4}},
-      {resource: Resource.Iron, pos: {x: 4, y: 4}},
-      {resource: Resource.Soil, pos: {x: 1, y: 5}},
-      {resource: Resource.Iron, pos: {x: 3, y: 5}},
-      {resource: Resource.Tree, pos: {x: 5, y: 5}},
-      {resource: Resource.Iron, pos: {x: 0, y: 6}},
-      {resource: Resource.Iron, pos: {x: 2, y: 6}},
-      {resource: Resource.Tree, pos: {x: 4, y: 6}},
-      {resource: Resource.Soil, pos: {x: 1, y: 7}},
-      {resource: Resource.Soil, pos: {x: 3, y: 7}},
-      {resource: Resource.Iron, pos: {x: 5, y: 7}},
+      {resource: Resource.Tree, x: 0, y: 0},
+      {resource: Resource.Tree, x: 2, y: 0},
+      {resource: Resource.Iron, x: 4, y: 0},
+      {resource: Resource.Soil, x: 1, y: 1},
+      {resource: Resource.Iron, x: 3, y: 1},
+      {resource: Resource.Tree, x: 5, y: 1},
+      {resource: Resource.Iron, x: 0, y: 2},
+      {resource: Resource.Iron, x: 2, y: 2},
+      {resource: Resource.Tree, x: 4, y: 2},
+      {resource: Resource.Soil, x: 1, y: 3},
+      {resource: Resource.Soil, x: 3, y: 3},
+      {resource: Resource.Iron, x: 5, y: 3},
+      {resource: Resource.Tree, x: 0, y: 4},
+      {resource: Resource.Tree, x: 2, y: 4},
+      {resource: Resource.Iron, x: 4, y: 4},
+      {resource: Resource.Soil, x: 1, y: 5},
+      {resource: Resource.Iron, x: 3, y: 5},
+      {resource: Resource.Tree, x: 5, y: 5},
+      {resource: Resource.Iron, x: 0, y: 6},
+      {resource: Resource.Iron, x: 2, y: 6},
+      {resource: Resource.Tree, x: 4, y: 6},
+      {resource: Resource.Soil, x: 1, y: 7},
+      {resource: Resource.Soil, x: 3, y: 7},
+      {resource: Resource.Iron, x: 5, y: 7},
     ]
   },
-  methods: {
-    svg_pos: function(cell_pos) {
-      s = R * Math.sin(Math.PI / 3.0);
-      c = R * Math.cos(Math.PI / 3.0);
-
-      x = cell_pos.x * (R + c) + OFFSET_X;
-      y = cell_pos.y * s + OFFSET_Y;
-      return {x: x, y: y}
-    },
-    svg_vertices: function(cell_pos) {
-      res = [];
-      p = this.svg_pos(cell_pos);
-      x = p.x, y = p.y;
-      res.push({x: cell_pos.x + 3, y: cell_pos.y + 1, svg_x: (x + R), svg_y: (y + 0)});
-      res.push({x: cell_pos.x + 2, y: cell_pos.y + 2, svg_x: (x + c), svg_y: (y + s)});
-      res.push({x: cell_pos.x + 1, y: cell_pos.y + 2, svg_x: (x - c), svg_y: (y + s)});
-      res.push({x: cell_pos.x + 0, y: cell_pos.y + 1, svg_x: (x - R), svg_y: (y + 0)});
-      res.push({x: cell_pos.x + 1, y: cell_pos.y + 0, svg_x: (x - c), svg_y: (y - s)});
-      res.push({x: cell_pos.x + 2, y: cell_pos.y + 0, svg_x: (x + c), svg_y: (y - s)});
+  computed: { // like read only properties
+    all_cells: function () {
+      let res = []
+      for (let i = 0; i < this.cells.length; i++) {
+        let c = this.cells[i];
+        c.svg_x = c.x * (R + COS) + OFFSET_X;
+        c.svg_y = c.y * SIN + OFFSET_Y;
+        c.points = this.vertices(c).map(v => v.svg_x + "," + v.svg_y).join(" ");
+        res.push(c);
+      }
       return res;
     },
-    svg_vertices_str: function(cell_pos) {
-      return this.svg_vertices(cell_pos).map(v => v.svg_x + "," + v.svg_y).join(" ");
+    all_vertices: function() {
+      let res = [];
+      let s = new Set();
+      for (let i = 0; i < this.all_cells.length; i++) {
+        let vertices = this.vertices(this.all_cells[i]);
+        for (let j = 0; j < vertices.length; j++) {
+          let x = vertices[j].x;
+          let y = vertices[j].y;
+          let pos = x + "," + y;
+          if (!s.has(pos)) {
+            res.push(vertices[j]);
+          }
+          s.add(pos);
+        }
+      }
+      return res;
+    }
+  },
+  methods: {
+    vertices: function(cell) {
+      let res = [];
+      let x = cell.x;
+      let y = cell.y;
+      let svg_x = cell.svg_x;
+      let svg_y = cell.svg_y;
+      res.push({x: x + 3, y: y + 1, svg_x: (svg_x + R),   svg_y: (svg_y + 0  )});
+      res.push({x: x + 2, y: y + 2, svg_x: (svg_x + COS), svg_y: (svg_y + SIN)});
+      res.push({x: x + 1, y: y + 2, svg_x: (svg_x - COS), svg_y: (svg_y + SIN)});
+      res.push({x: x + 0, y: y + 1, svg_x: (svg_x - R),   svg_y: (svg_y + 0  )});
+      res.push({x: x + 1, y: y + 0, svg_x: (svg_x - COS), svg_y: (svg_y - SIN)});
+      res.push({x: x + 2, y: y + 0, svg_x: (svg_x + COS), svg_y: (svg_y - SIN)});
+      return res;
     },
   }
 })
 
-var conn = new WebSocket('ws://localhost:8000/echo');
+let conn = new WebSocket('ws://localhost:8000/echo');
 conn.onopen = function(e) {
-  for (var i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     conn.send('hello ' + i);
   }
 };
