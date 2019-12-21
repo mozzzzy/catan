@@ -57,6 +57,9 @@ let map = new Vue({
       let res = [];
       for (let i = 0, y = OFFSET_Y - SIN; y <= HEIGHT; i++, y+= SIN) {
         res.push({x: 0, y: y, width: this.width, height: 1, message: i});
+        if (i == 0) {
+          res[i].message = "y =" + res[i].message;
+        }
       }
       return res;
     },
@@ -64,6 +67,9 @@ let map = new Vue({
       let res = [];
       for (let i = 0, x = OFFSET_X - R; x <= WIDTH; i++, x += i%2 ? COS : R) {
         res.push({x: x, y: 0, width: 1, height: this.height, message: i});
+        if (i == 0) {
+          res[i].message = "x =" + res[i].message;
+        }
       }
       return res;
     },
