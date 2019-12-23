@@ -8,24 +8,66 @@ import (
 
 var GameInstance Game
 
-type Message struct {
+type Type string
+
+const JoinType = "Join"
+const ReloadType = "Reload" // For Debugging purpose
+
+type BaseMsg struct {
 	ClientID string `json:"client_id"`
+	Type     Type   `json:"type"`
 	Message  string `json:"message"`
 }
 
+// Received Messages from Client
+type RecvMsg struct {
+	BaseMsg
+}
+
+// Send Messages to Client
+type SendJoinMsg struct {
+	BaseMsg
+}
+
+type SendReloadMsg struct {
+	BaseMsg
+	Game Game `json:"game"`
+}
+
 func recieveMessage(ws *websocket.Conn) {
-	msg := Message{}
+	recvMsg := RecvMsg{}
 	for {
-		if err := websocket.JSON.Receive(ws, &msg); err != nil {
+		if err := websocket.JSON.Receive(ws, &recvMsg); err != nil {
 			fmt.Printf("%v\n", err)
 			break
 		}
-		fmt.Printf("message recieved: %v\n", msg)
+		fmt.Printf("message recieved: %v\n", recvMsg)
 
-		GameInstance = NewGame()
-		if err := websocket.JSON.Send(ws, GameInstance); err != nil {
-			fmt.Printf("%v\n", err)
-			break
+		switch recvMsg.Type {
+		case JoinType:
+			joinMsg := SendJoinMsg{
+				BaseMsg: BaseMsg{
+					ClientID: recvMsg.ClientID,
+					Type:     JoinType,
+				},
+			}
+			if err := websocket.JSON.Send(ws, joinMsg); err != nil {
+				fmt.Printf("%v\n", err)
+				break
+			}
+		case ReloadType:
+			GameInstance = NewGame()
+			sendMsg := SendReloadMsg{
+				BaseMsg: BaseMsg{
+					ClientID: recvMsg.ClientID,
+					Type:     ReloadType,
+				},
+				Game: GameInstance,
+			}
+			if err := websocket.JSON.Send(ws, sendMsg); err != nil {
+				fmt.Printf("%v\n", err)
+				break
+			}
 		}
 		fmt.Printf("message send: %v\n", GameInstance)
 	}
