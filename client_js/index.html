@@ -1,8 +1,5 @@
 <body>
   <div id = "map">
-    <input type="text" v-model="client_id" placeholder="client id" />
-    <button v-on:click="join">Join !!</button>
-    <button v-on:click="reload">Reload !!</button>
     <svg v-bind:width="width" v-bind:height="height" v-bind:viewBox="view_box">
       <rect x="0" y="0" v-bind:width="width" v-bind:height="height" fill="lightblue" stroke="darkblue" stroke-width="10" />
       <rect fill="darkblue" v-bind:x="l.x" v-bind:y="l.y" v-bind:width="l.width" v-bind:height="l.height" v-for="l in x_axis" />
@@ -24,6 +21,9 @@
       {{ v.message }}
       </text>
     </svg>
+    <input type="text" v-model="client_id" placeholder="client id" />
+    <button v-on:click="join">Join !!</button>
+    <button v-on:click="reload">Reload !!</button>
   </div>
 </body>
 
