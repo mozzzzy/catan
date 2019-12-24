@@ -91,7 +91,7 @@ let map = new Vue({
     },
   },
   created: function() {
-    this.conn = new WebSocket('ws://localhost:8000/echo');
+    this.conn = new WebSocket('ws://localhost:8000/ws');
     this.conn.onopen = this.onopen;
     this.conn.onmessage = this.onmessage;
     this.conn.onerror = this.onerror;
@@ -116,7 +116,7 @@ let map = new Vue({
       d = JSON.parse(e.data);
       switch (d.type) {
         case 'Join':
-          console.log(d.client_id + ' joined this game')
+          console.log(d.message)
           break;
         case 'Reload':
           let cells = d.game.cells;
