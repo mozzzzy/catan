@@ -38,9 +38,8 @@ let map = new Vue({
       let res = [];
       for (let i = 0, y = OFFSET_Y - SIN; y <= HEIGHT; i++ , y += SIN) {
         res.push({ x: 0, y: y, width: this.width, height: 1, message: i });
-        if (i == 0) {
-          res[i].message = "y =" + res[i].message;
-        }
+        if (i == 0)
+          res[i].message = "y = " + res[i].message;
       }
       return res;
     },
@@ -48,27 +47,24 @@ let map = new Vue({
       let res = [];
       for (let i = 0, x = OFFSET_X - R; x <= WIDTH; i++ , x += i % 2 ? COS : R) {
         res.push({ x: x, y: 0, width: 1, height: this.height, message: i });
-        if (i == 0) {
-          res[i].message = "x =" + res[i].message;
-        }
+        if (i == 0)
+          res[i].message = "x = " + res[i].message;
       }
       return res;
     },
     all_cells: function() {
       let res = []
-      for (let i = 0; i < this.cells.length; i++) {
-        let c = this.cells[i];
+      for (let c of this.cells) {
         c.svg_x = c.x * (R + COS) + OFFSET_X;
         c.svg_y = c.y * SIN + OFFSET_Y;
-        c.vertices = [];
-        {
-          c.vertices.push({ x: 2 * c.x + 3, y: c.y + 1, svg_x: (c.svg_x + R), svg_y: (c.svg_y + 0) });
-          c.vertices.push({ x: 2 * c.x + 2, y: c.y + 2, svg_x: (c.svg_x + COS), svg_y: (c.svg_y + SIN) });
-          c.vertices.push({ x: 2 * c.x + 1, y: c.y + 2, svg_x: (c.svg_x - COS), svg_y: (c.svg_y + SIN) });
-          c.vertices.push({ x: 2 * c.x + 0, y: c.y + 1, svg_x: (c.svg_x - R), svg_y: (c.svg_y + 0) });
-          c.vertices.push({ x: 2 * c.x + 1, y: c.y + 0, svg_x: (c.svg_x - COS), svg_y: (c.svg_y - SIN) });
-          c.vertices.push({ x: 2 * c.x + 2, y: c.y + 0, svg_x: (c.svg_x + COS), svg_y: (c.svg_y - SIN) });
-        }
+        c.vertices = [
+          { x: 2 * c.x + 3, y: c.y + 1, svg_x: (c.svg_x + R), svg_y: (c.svg_y + 0) },
+          { x: 2 * c.x + 2, y: c.y + 2, svg_x: (c.svg_x + COS), svg_y: (c.svg_y + SIN) },
+          { x: 2 * c.x + 1, y: c.y + 2, svg_x: (c.svg_x - COS), svg_y: (c.svg_y + SIN) },
+          { x: 2 * c.x + 0, y: c.y + 1, svg_x: (c.svg_x - R), svg_y: (c.svg_y + 0) },
+          { x: 2 * c.x + 1, y: c.y + 0, svg_x: (c.svg_x - COS), svg_y: (c.svg_y - SIN) },
+          { x: 2 * c.x + 2, y: c.y + 0, svg_x: (c.svg_x + COS), svg_y: (c.svg_y - SIN) },
+        ];
         c.points = c.vertices.map(v => v.svg_x + "," + v.svg_y).join(" ");
         c.color = ResourceMap[c.resource];
         res.push(c);
@@ -78,18 +74,12 @@ let map = new Vue({
     all_vertices: function() {
       let res = [];
       let s = new Set();
-      for (let i = 0; i < this.all_cells.length; i++) {
-        let vertices = this.all_cells[i].vertices;
-        for (let j = 0; j < vertices.length; j++) {
-          let v = vertices[j];
-
+      for (let c of this.all_cells) {
+        for (let v of c.vertices) {
           // add message for port
-          for (let k = 0; k < this.vertices.length; k++) {
-            if (v.x == this.vertices[k].x && v.y == this.vertices[k].y) {
-              v.message = " " + this.vertices[k].trade_rate + ":1 " + this.vertices[k].port;
-            }
-          }
-
+          for (let tv of this.vertices)
+            if (v.x == tv.x && v.y == tv.y)
+              v.message = " " + tv.trade_rate + ":1 " + tv.port;
           // prevent duplication
           let pos = v.x + "," + v.y;
           if (!s.has(pos))
@@ -131,13 +121,8 @@ let map = new Vue({
         case 'Reload':
           let cells = d.game.cells;
           this.cells = [];
-          for (let i = 0; i < cells.length; i++) {
-            this.cells.push({
-              x: cells[i].x,
-              y: cells[i].y,
-              resource: cells[i].resource,
-            });
-          }
+          for (let c of cells)
+            this.cells.push({ x: c.x, y: c.y, resource: c.resource });
           break;
       }
     },
