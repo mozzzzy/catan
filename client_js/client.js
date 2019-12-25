@@ -33,6 +33,14 @@ let map = new Vue({
       { x: 6, y: 0, trade_rate: 2, port: "FOREST" },
       { x: 8, y: 9, trade_rate: 3, port: "ALL" },
     ],
+    lines: [
+      { x1: 6, y1: 4, x2: 7, y2: 5, player: 'RED' },
+      { x1: 5, y1: 4, x2: 6, y2: 4, player: 'RED' },
+      { x1: 6, y1: 2, x2: 7, y2: 3, player: 'RED' },
+      { x1: 7, y1: 3, x2: 6, y2: 4, player: 'RED' },
+      { x1: 9, y1: 4, x2: 8, y2: 5, player: 'BLUE' },
+      { x1: 8, y1: 5, x2: 9, y2: 6, player: 'BLUE' },
+    ],
   },
   computed: { // like read only properties
     view_box: function() {
@@ -72,6 +80,28 @@ let map = new Vue({
         c.points = c.vertices.map(v => v.svg_x + "," + v.svg_y).join(" ");
         c.color = ResourceMap[c.resource];
         res.push(c);
+      }
+      return res;
+    },
+    all_lines: function() {
+      let res = [];
+      let s = new Set();
+      for (let tl of this.lines) {
+        for (let c of this.all_cells) {
+          let v1 = undefined, v2 = undefined;
+          for (let v of c.vertices) {
+            if (v.x == tl.x1 && v.y == tl.y1)
+              v1 = v;
+            if (v.x == tl.x2 && v.y == tl.y2)
+              v2 = v;
+          }
+          if (!v1 || !v2)
+            continue;
+          let pos = v1.x + "," + v1.y + "," + v2.x + "," + v2.y;
+          if (!s.has(pos))
+            res.push({ player: tl.player, svg_x1: v1.svg_x, svg_y1: v1.svg_y, svg_x2: v2.svg_x, svg_y2: v2.svg_y });
+          s.add(pos);
+        }
       }
       return res;
     },
