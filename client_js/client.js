@@ -25,7 +25,11 @@ let map = new Vue({
       { x: 2, y: 4, resource: "NONE" },
     ],
     vertices: [
-      { x: 2, y: 2, trade_rate: 2, port: "FOREST" },
+      { x: 5, y: 4, player: 'RED', building: 'settlement' },
+      { x: 6, y: 2, player: 'RED', building: 'city' },
+      { x: 9, y: 4, player: 'BLUE', building: 'settlement' },
+      { x: 9, y: 6, player: 'BLUE', building: 'city' },
+      { x: 2, y: 6, trade_rate: 2, port: "FOREST" },
       { x: 6, y: 0, trade_rate: 2, port: "FOREST" },
       { x: 8, y: 9, trade_rate: 3, port: "ALL" },
     ],
@@ -76,10 +80,17 @@ let map = new Vue({
       let s = new Set();
       for (let c of this.all_cells) {
         for (let v of c.vertices) {
-          // add message for port
-          for (let tv of this.vertices)
-            if (v.x == tv.x && v.y == tv.y)
+          for (let tv of this.vertices) {
+            // add message for port
+            if (v.x == tv.x && v.y == tv.y && tv.trade_rate && tv.port)
               v.message = " " + tv.trade_rate + ":1 " + tv.port;
+            // add message for building
+            if (v.x == tv.x && v.y == tv.y && tv.player && tv.building) {
+              v.player = tv.player;
+              v.buulding = tv.building;
+              v.radius = (tv.building == 'city' ? 15 : 10);
+            }
+          }
           // prevent duplication
           let pos = v.x + "," + v.y;
           if (!s.has(pos))

@@ -13,10 +13,12 @@
       {{ l.message }}
       </text>
 
-      <polygon v-bind:fill="c.color" stroke="orange" stroke-width="8" v-bind:points="c.points" v-for="c in all_cells" />
+      <polygon v-bind:fill="c.color" stroke="azure" stroke-width="8" v-bind:points="c.points" v-for="c in all_cells" />
       <text font-weight="bold" v-bind:x="c.svg_x" v-bind:y="c.svg_y" font-size="20" text-anchor="middle" v-for="c in all_cells">
       {{ "(" + c.x + "," + c.y + ")" }}
       </text>
+      <circle r="7" fill="azure" v-bind:cx="v.svg_x" v-bind:cy="v.svg_y"  v-if="!v.player" v-for="v in all_vertices" />
+      <circle v-bind:r="v.radius" v-bind:fill="v.player" v-bind:cx="v.svg_x" v-bind:cy="v.svg_y"  v-if="v.player" v-for="v in all_vertices" />
       <text font-weight="bold" v-bind:x="v.svg_x" v-bind:y="v.svg_y" font-size="16" text-anchor="middle" v-for="v in all_vertices">
       {{ v.message }}
       </text>
