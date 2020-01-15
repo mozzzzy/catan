@@ -4,25 +4,27 @@ import (
 	"math/rand"
 )
 
+// NONE produces NONE
 const NONE = "NONE"
 
-// Forest (produces Lumber) 木
+// FOREST produces Lumber 木
 const FOREST = "FOREST"
 
-// Pasture (produces Wool) 羊毛
+// PASTURE produces Wool 羊毛
 const PASTURE = "PASTURE"
 
-// Field (produces Grain) 小麦
+// FIELD produces Grain 小麦
 const FIELD = "FIELD"
 
-// Hill (produces Brick) レンガ、土
+// HILL produces Brick レンガ、土
 const HILL = "HILL"
 
-// Mountain (produces Ore) 鉱石
+// MOUNTAIN produces Ore 鉱石
 const MOUNTAIN = "MOUNTAIN"
 
 type resource string
 
+// Cell is hex type
 type Cell struct {
 	X        int      `json:"x"`
 	Y        int      `json:"y"`
@@ -30,6 +32,7 @@ type Cell struct {
 	Resource resource `json:"resource"`
 }
 
+// Game has all states
 type Game struct {
 	Cells []Cell `json:"cells"`
 }
@@ -42,6 +45,7 @@ func shuffle(data []resource) {
 	}
 }
 
+// NewGame return new game instance
 func NewGame() Game {
 	g := Game{}
 	g.Cells = []Cell{

@@ -6,15 +6,25 @@ import (
 	"net/http"
 )
 
+// GameInstance is main game instance
 var GameInstance Game
+
+// RecvChan keeps all messages sent by clients.
 var RecvChan chan Msg
+
+// Clients is the connection information for all clients.
 var Clients map[string]*websocket.Conn
 
+// Type is for message type
 type Type string
 
+//JoinType is used when joining the game.
 const JoinType = "Join"
-const ReloadType = "Reload" // For Debugging purpose
 
+// ReloadType is For Debugging purpose
+const ReloadType = "Reload"
+
+// Msg is the type for all messages.
 type Msg struct {
 	ClientID string `json:"client_id"`
 	Type     Type   `json:"type"`
@@ -65,12 +75,13 @@ func sendMsg(s Msg) {
 }
 
 func broadcastMsg(s Msg) {
-	for clientID, _ := range Clients {
+	for clientID := range Clients {
 		s.ClientID = clientID
 		sendMsg(s)
 	}
 }
 
+// MsgMain is the entry point executed when receiving any message.
 func MsgMain() {
 	for r := range RecvChan {
 		switch r.Type {
