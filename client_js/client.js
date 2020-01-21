@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 const R = 60;
 const OFFSET_X = 160;
 const OFFSET_Y = 160;
