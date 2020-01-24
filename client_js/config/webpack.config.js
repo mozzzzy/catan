@@ -7,7 +7,7 @@ module.exports = {
   entry: './client.js',
   output: {
     filename: 'bundle.js',
-    path: path.join(__dirname, '../')
+    path: path.join(__dirname, '../'),
   },
   module: {
     rules: [
@@ -16,27 +16,27 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           loaders: {
-            scss: 'vue-style-loader!css-loader'
-          }
-        }
+            scss: 'vue-style-loader!css-loader',
+          },
+        },
       },
       {
         test: /\.css/,
         use: [
           'vue-style-loader',
-          'css-loader'
-        ]
-      }
-    ]
+          'css-loader',
+        ],
+      },
+    ],
   },
   resolve: {
     extensions: ['.js', '.vue'],
     modules: [
-      'node_modules'
+      'node_modules',
     ],
     alias: {
-      vue: 'vue/dist/vue.common.js'
-    }
+      vue: 'vue/dist/vue.common.js',
+    },
   },
-  plugins: [new VueLoaderPlugin()]
+  plugins: [new VueLoaderPlugin()],
 };

@@ -5,10 +5,15 @@
   "private": true,
   "scripts": {
     "build": "webpack-cli --config config/webpack.config.js",
+    "lint": "eslint --config config/eslintrc.json .",
+    "lintfix": "eslint --config config/eslintrc.json --fix .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
     "css-loader": "^3.4.2",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
     "vue-loader": "^15.8.3",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.41.5",
